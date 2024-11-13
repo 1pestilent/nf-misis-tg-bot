@@ -4,12 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncAttrs, async_session, async_sessionmaker
 
 from typing import Annotated
 
-from dotenv import load_dotenv
-import os
-
-
-engine = create_async_engine(f"postgresql+asyncpg://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}")
-async_session = async_sessionmaker(engine)
 
 int_pk = Annotated[int, mapped_column(primary_key=True)]
 
