@@ -49,3 +49,8 @@ class GroupLink(Base):
     id: Mapped[int_pk]   
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'))
     group_id: Mapped[int] = mapped_column(ForeignKey('groups.id', ondelete='CASCADE'))
+
+
+async def async_main():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
