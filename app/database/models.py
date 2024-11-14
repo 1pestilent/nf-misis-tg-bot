@@ -14,8 +14,7 @@ class Base(AsyncAttrs, DeclarativeBase):
 class User(Base):
     __tablename__ = 'users'
 
-    id: Mapped[int_pk] 
-    tg_id = mapped_column(BigInteger)
+    id = mapped_column(BigInteger, primary_key=True)
     name: Mapped[str] = mapped_column(String(32))
     email: Mapped[str] = mapped_column(String(32))
     is_subscribed: Mapped[bool] = mapped_column(Boolean, default=False)

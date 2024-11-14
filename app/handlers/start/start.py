@@ -51,8 +51,8 @@ async def register_group(message: Message, state: FSMContext, bot: Bot):
 
         db = DataBase()
         group_id = await db.get_group_id(dates['group'])
-        await db.add_user(message.from_user.id, message.from_user.username,dates["email"])
-        user_id = await db.get_user_id(message.from_user.id)
+        user_id = message.from_user.id
+        await db.add_user(user_id, message.from_user.username,dates["email"])
         await db.create_group_link(user_id, group_id)
         await bot.send_message(message.from_user.id, text = successful_registration, reply_markup = main_keyboard.main())
         await state.clear()
