@@ -31,7 +31,6 @@ async def start_register(callback: CallbackQuery, state: FSMContext, bot: Bot):
     await bot.edit_message_reply_markup(chat_id=callback.from_user.id, message_id=callback.message.message_id, reply_markup=None)
     await callback.message.answer(indicate_email)
     await state.set_state(RegisterState.email)
-    await callback.answer()
 
 @start_router.message(RegisterState.email)
 async def register_email(message: Message, state: FSMContext, bot: Bot):

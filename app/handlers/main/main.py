@@ -5,8 +5,12 @@ from aiogram.fsm.context import FSMContext
 
 from app.database.requests import DataBase
 from app.handlers.main.main_keyboard import *
+from app.handlers.main.main_state import EditEmailState, EditGroupState
+from app.handlers.start.start_keyboard import groups_keyboard
 from app.core.dictionary import *
 
+import re
+from app.core import valid
 
 main_router = Router()
 
@@ -28,3 +32,21 @@ async def text_handler(message: Message):
         await get_settings(message)
     elif message.text == button_list[1]:
         await get_help(message)
+
+@main_router.callback_query(F.data.startswith('edit_email_call'))
+async def start_edit_email(callback: CallbackQuery, state: FSMContext, bot: Bot):
+    await bot.send_message(callback.from_user.id, indicate_email)
+    await state.set_state(EditEmailState.email)
+
+@main_router.message(EditEmailState.email)
+async def edit_email(message: Message, state: FSMContext, bot: Bot):
+    if re.match(valid.email_validation, message.text):
+        await state.update_data(email=message.text)
+        data = await state.get_data()
+        db = DataBase()
+        if await db.update_user_email(message.from_user.id, data['email']):
+            await  bot.send_message(message.from_user.id, succesesful_edit_email)
+        else:
+            await bot.send_message(message.from_user.id, fail_edit_email)
+    else:
+        await bot.send_message(message.from_user.id, error_email)   

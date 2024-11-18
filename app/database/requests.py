@@ -67,4 +67,16 @@ class DataBase():
                 group_id = group)
             request.add(new_link)
             await request.commit()
-    
+
+    async def update_user_email(self, user_id, new_mail):
+        async with self.Session() as request:
+            result = await request.execute(select(User).where(User.id == user_id))
+            user = result.scalar_one_or_none()
+
+            if User.email == new_mail:
+                return False
+            else:
+                user.email = new_mail
+                await request.commit()
+                return True
+        
