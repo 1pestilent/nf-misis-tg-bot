@@ -22,9 +22,9 @@ start_router = Router()
 async def hello_windows(message: Message, bot: Bot):
     db = DataBase()
     if not await db.get_user(message.from_user.id):
-        await bot.send_message(message.from_user.id, text = register_message, reply_markup=await kb.register_kb())
+        await bot.send_message(message.from_user.id, text = register_message, reply_markup=kb.register_kb())
     else:
-        await bot.send_message(message.from_user.id, start_message)
+        await bot.send_message(message.from_user.id, start_message, reply_markup=main_keyboard.main())
 
 @start_router.callback_query(F.data.startswith('register'))
 async def start_register(callback: CallbackQuery, state: FSMContext, bot: Bot):
@@ -40,7 +40,6 @@ async def register_email(message: Message, state: FSMContext, bot: Bot):
         await state.set_state(RegisterState.group)
     else:
         await bot.send_message(message.from_user.id, error_email)   
-    
 
 @start_router.message(RegisterState.group)
 async def register_group(message: Message, state: FSMContext, bot: Bot):

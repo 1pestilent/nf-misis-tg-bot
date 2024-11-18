@@ -35,6 +35,7 @@ async def text_handler(message: Message):
 
 @main_router.callback_query(F.data.startswith('edit_email_call'))
 async def start_edit_email(callback: CallbackQuery, state: FSMContext, bot: Bot):
+    await bot.edit_message_reply_markup(chat_id=callback.from_user.id, message_id=callback.message.message_id, reply_markup=None)
     await bot.send_message(callback.from_user.id, indicate_email)
     await state.set_state(EditEmailState.email)
 
@@ -45,8 +46,27 @@ async def edit_email(message: Message, state: FSMContext, bot: Bot):
         data = await state.get_data()
         db = DataBase()
         if await db.update_user_email(message.from_user.id, data['email']):
-            await  bot.send_message(message.from_user.id, succesesful_edit_email)
+            await  bot.send_message(message.from_user.id, succesesful_edit_email, reply_markup=main())
         else:
             await bot.send_message(message.from_user.id, fail_edit_email)
     else:
         await bot.send_message(message.from_user.id, error_email)   
+
+@main_router.callback_query(F.data.startswith('edit_group_call'))
+async def start_group_email(callback: CallbackQuery, state: FSMContext, bot: Bot):
+    await bot.edit_message_reply_markup(chat_id=callback.from_user.id, message_id=callback.message.message_id, reply_markup=None)
+    await bot.send_message(callback.from_user.id, choose_group, reply_markup=groups_keyboard())
+    await state.set_state(EditGroupState.group)
+
+@main_router.message(EditGroupState.group)
+async def edit_email(message: Message, state: FSMContext, bot: Bot):
+    if message.text in current_groups:
+        await state.update_data(group=message.text)
+        data = await state.get_data()
+
+        db = DataBase()
+        await db.update_user_group(message.from_user.id, data["group"])
+        await bot.send_message(message.from_user.id, text = succesesful_edit_group, reply_markup=main())
+        await state.clear()
+    else:
+        await bot.send_message(message.from_user.id, error_group)

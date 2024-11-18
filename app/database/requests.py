@@ -68,15 +68,30 @@ class DataBase():
             request.add(new_link)
             await request.commit()
 
-    async def update_user_email(self, user_id, new_mail):
+    async def update_user_email(self, user, new_mail):
         async with self.Session() as request:
-            result = await request.execute(select(User).where(User.id == user_id))
+            result = await request.execute(select(User).where(User.id == user))
             user = result.scalar_one_or_none()
 
             if User.email == new_mail:
                 return False
             else:
                 user.email = new_mail
+                await request.commit()
+                return True
+    
+    async def update_user_group(self, user, group_name):
+        async with self.Session() as request:
+            result = await request.execute(select(GroupLink).where(GroupLink.user_id == user))
+            link = result.scalar_one_or_none()
+
+            if link is None:
+                return False
+            else:
+                await request.delete(link)
+                group = await self.get_group_id(group_name)
+                new_link = GroupLink(user_id = user, group_id = group)
+                request.add(new_link)
                 await request.commit()
                 return True
         
