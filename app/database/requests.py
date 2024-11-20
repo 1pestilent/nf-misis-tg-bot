@@ -89,6 +89,28 @@ class DataBase():
             user.email_confirmed = True
             await request.commit()
 
+    async def check_email_subscribe(self, user):
+            async with self.Session() as request:
+                result = await request.execute(select(User.is_subscribed).where(User.id == user))
+                subscribe = result.scalar_one_or_none()
+
+                if subscribe:
+                    return True
+                else:
+                    return False
+
+    async def update_email_subscribe(self, user):
+            async with self.Session() as request:
+                result = await request.execute(select(User).where(User.id == user))
+                user = result.scalar_one_or_none()
+                
+                if not user.is_subscribed:
+                    user.is_subscribed = True
+                else:
+                    user.is_subscribed = False
+            
+                await request.commit()
+
     async def check_email_confirm(self, user):
         async with self.Session() as request:
             result = await request.execute(select(User.email_confirmed).where(User.id == user))

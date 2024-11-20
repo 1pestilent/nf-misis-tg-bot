@@ -29,7 +29,10 @@ async def get_settings(message: Message):
     if not await db.check_email_confirm(message.from_user.id):
         await message.answer(text, reply_markup=for_settings_unconfirm())    
     else:
-        await message.answer(text, reply_markup=for_settings_confirm())
+        if not await db.check_email_subscribe(message.from_user.id):
+            await message.answer(text, reply_markup=for_settings_confirm())
+        else:  
+            await message.answer(text, reply_markup=for_settings_confirm_subscribed())
 
 @main_router.message(Command('subscribe'))
 async def subscribe(message: Message):
@@ -113,3 +116,19 @@ async def edit_email(message: Message, state: FSMContext, bot: Bot):
     else:
         await bot.send_message(message.from_user.id, f'Код подтверждения указан не верно. Попробуйте еще раз!', reply_markup=main())
         await state.clear()
+
+@main_router.callback_query(F.data.startswith('subscribe_email_call'))
+async def subscribe(callback: CallbackQuery, state: FSMContext, bot: Bot):
+    await bot.edit_message_reply_markup(chat_id=callback.from_user.id, message_id=callback.message.message_id, reply_markup=None)
+
+    db = DataBase()
+    await db.update_email_subscribe(callback.from_user.id)
+    await bot.send_message(callback.from_user.id, text=succesesful_subscribe, reply_markup=main())
+
+@main_router.callback_query(F.data.startswith('unsubscribe_email_call'))
+async def unsubscribe(callback: CallbackQuery, state: FSMContext, bot: Bot):
+    await bot.edit_message_reply_markup(chat_id=callback.from_user.id, message_id=callback.message.message_id, reply_markup=None)
+
+    db = DataBase()
+    await db.update_email_subscribe(callback.from_user.id)
+    await bot.send_message(callback.from_user.id, text=succesesful_unsubscribe, reply_markup=main())
