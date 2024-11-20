@@ -17,6 +17,7 @@ class User(Base):
     id = mapped_column(BigInteger, primary_key=True)
     name: Mapped[str] = mapped_column(String(32))
     email: Mapped[str] = mapped_column(String(32))
+    email_confirmed: Mapped[bool] = mapped_column(Boolean, default=False)
     is_subscribed: Mapped[bool] = mapped_column(Boolean, default=False)
 
 

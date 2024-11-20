@@ -6,3 +6,6 @@ class EditEmailState(StatesGroup):
 class EditGroupState(StatesGroup):
     group = State()
 
+class ConfirmEmailState(StatesGroup):
+    code = State()
+    ccode = State()

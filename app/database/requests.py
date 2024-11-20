@@ -77,9 +77,29 @@ class DataBase():
                 return False
             else:
                 user.email = new_mail
+                user.email_confirmed = False
                 await request.commit()
                 return True
     
+    async def update_email_confirm(self, user):
+        async with self.Session() as request:
+            result = await request.execute(select(User).where(User.id == user))
+            user = result.scalar_one_or_none()
+
+            user.email_confirmed = True
+            await request.commit()
+
+    async def check_email_confirm(self, user):
+        async with self.Session() as request:
+            result = await request.execute(select(User.email_confirmed).where(User.id == user))
+            confirm = result.scalar_one_or_none()
+
+            if confirm:
+                return True
+            else:
+                return False
+    
+
     async def update_user_group(self, user, group_name):
         async with self.Session() as request:
             result = await request.execute(select(GroupLink).where(GroupLink.user_id == user))
