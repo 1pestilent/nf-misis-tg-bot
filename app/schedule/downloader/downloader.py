@@ -10,7 +10,8 @@ def get_schedule(week):
 
     for i in courses:
         link = f'{base_link}/{i}k%20{week}.xlsx'
-        save_name = f'{i}k_{week}.xlsx'
+        name = f'{i}k_{week}.xlsx'
+        path = f'app/schedule/handler/{name}'
         try:
             response = requests.get(link)
             if response.status_code == 200:
@@ -28,3 +29,5 @@ def get_schedule(week):
                     print(f"Ошибка при скачивании файла: {response.status_code}")
         except Exception as e:
             print(f"Произошла ошибка: {e}")
+
+get_schedule(get_current_week())
