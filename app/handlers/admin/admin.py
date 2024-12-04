@@ -18,7 +18,7 @@ admin_router = Router()
 async def download_current_week(message: Message, bot: Bot):
     week = timecalc.get_current_week()
     first_day_week = timecalc.get_first_day_current_week()
-    for course in range(1,2):
+    for course in dictionary.courses:
         photo_id = []
         pngs = get_schedule(course, week)
         await bot.send_message(message.from_user.id, f'Расписание за {week} для {course}-ого курса\n{first_day_week}\n\n Список загружаемых png: {pngs}')
@@ -29,4 +29,4 @@ async def download_current_week(message: Message, bot: Bot):
         db = DataBase()
         await db.add_timetable(course = course, week = first_day_week)
         tt_id = await db.get_timetable_id()
-        await db.add_pngs(ids = pngs, timetable_id=tt_id)
+        await db.add_pngs(ids = photo_id, timetable_id=tt_id)
