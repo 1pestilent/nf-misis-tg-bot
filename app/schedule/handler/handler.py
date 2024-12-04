@@ -3,29 +3,25 @@ from openpyxl import load_workbook
 import zipfile
 import os
 
-from app.schedule.dirs import xlsx_dir, pdf_dir, zip_dir
+from time import sleep
+from PIL import Image
 
-def delete_3_sheet():
+from app.schedule.dirs import *
+from app.schedule.downloader import downloader, timecalc
+from app.schedule.handler import converter
 
-    files = os.listdir(xlsx_dir)
+def delete_3_sheet(path):
+    workbook = load_workbook(path)
+    if len(workbook.sheetnames) < 3:
+        print(f"[Ошибка] В документе'{path}' нет нужного листа!")
+        return path
+    else:
+        while len(workbook.sheetnames) >= 3:
+            sheet_to_delete = workbook.sheetnames[2]
+            workbook.remove(workbook[sheet_to_delete])
+            workbook.save(path)
+            print(f"[Успешно] Лист '{sheet_to_delete}' удалён из документа {path}.")
     
-    for xlsx in files:
-        if xlsx.endswith('.xlsx'):
-            xlsx_path = (f'{xlsx_dir}/{xlsx}')
-            workbook = load_workbook(xlsx_path)
-
-        if len(workbook.sheetnames) < 3:
-            print(f"[Ошибка] В документе'{xlsx}' нет 3-его листа!!!")
-            continue
-            
-
-        sheet_to_delete = workbook.sheetnames[2]
-        workbook.remove(workbook[sheet_to_delete])
-
-        workbook.save(xlsx_path)
-        print(f"[Успех] Лист '{sheet_to_delete}' удалён из файла {xlsx}.")
-
-    return True
 
 
 def unzip():
@@ -37,3 +33,14 @@ def unzip():
             with zipfile.ZipFile(f'{zip_dir}/{zip}', 'r') as zipper:
                 zipper.extractall(pdf_dir)
                 print(f"[Успешно] Архив {zip} успешно разархивирован")
+
+
+
+
+def getting_schedule(course, week):
+    path = downloader.get_schedule(course, week)
+    delete_3_sheet(path)
+    pdf_path = converter.xlsx_to_pdf(path)
+    pngs = converter.pdf_to_png(pdf_path, course, week)
+
+getting_schedule(3, timecalc.get_current_week())

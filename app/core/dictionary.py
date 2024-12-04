@@ -15,6 +15,9 @@ current_groups = [
     'БМТ-21', 'БМТ-22', 'БМТ-23', 'БМТ-24', 
     'БЭЭ-21', 'БЭЭ-22', 'БЭЭ-23', 'БЭЭ-24', 
     ]
+
+courses = ['1 курс', '2 курс', '3 курс', '4 курс']
+
 # -----------------Ссылки-----------------
 link_github = 'https://github.com/1pestilent/nf-misis-tg-bot.git'
 link_vkgroup = 'https://vk.com/misisbot'

@@ -31,11 +31,9 @@ class Group(Base):
 class TimeTable(Base):
     __tablename__ = 'timetables'
 
-    id: Mapped[int_pk]   
-    group_id: Mapped[int] = mapped_column(ForeignKey('groups.id', ondelete='CASCADE'))
-    pdf_path: Mapped[str] = mapped_column(String(256)) 
+    id: Mapped[int_pk]
+    course: Mapped[int] = mapped_column()
     created_at: Mapped[DateTime] = mapped_column(DateTime, server_default=text("TIMEZONE('utc',now())"))
-
 
 class GroupLink(Base):
     __tablename__ = 'grouplinks'
@@ -43,6 +41,8 @@ class GroupLink(Base):
     id: Mapped[int_pk]   
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'))
     group_id: Mapped[int] = mapped_column(ForeignKey('groups.id', ondelete='CASCADE'))
+
+
 
 
 async def async_main():
