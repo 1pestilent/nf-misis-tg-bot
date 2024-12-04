@@ -24,6 +24,14 @@ class DataBase():
                     session.add(group)
             await session.commit()
 
+    async def add_permissions(self, permissions):
+        async with self.Session() as session:
+            async with session.begin():
+                for permission in permissions:
+                    level = Permission(name=permission)
+                    session.add(level)
+            await session.commit()
+
     async def get_group_id(self, group_name):
         async with self.Session() as session:
             async with session.begin(): 
@@ -34,6 +42,11 @@ class DataBase():
     async def get_group_names_by_user_id(self, user_id):
         async with self.Session() as request:
             result = await request.execute(select(Group.group_name).join(GroupLink, Group.id == GroupLink.group_id).where(GroupLink.user_id == user_id))
+        return result.scalar_one_or_none()
+
+    async def get_permission_by_user_id(self, user_id):
+        async with self.Session() as request:
+            result = await request.execute(select(Permission.name).join(User, User.permission == Permission.id).where(User.id == user_id))
         return result.scalar_one_or_none()
 
     async def get_user(self, user_id):
@@ -136,4 +149,5 @@ class DataBase():
                 request.add(new_link)
                 await request.commit()
                 return True
+    
         

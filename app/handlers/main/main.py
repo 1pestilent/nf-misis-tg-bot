@@ -25,7 +25,8 @@ async def get_settings(message: Message):
     db = DataBase()
     user_email = await db.get_user_email(message.from_user.id)
     user_group = await db.get_group_names_by_user_id(message.from_user.id)
-    text = (f'Настройки:\n\nТвоя почта: {user_email}\nТвоя группа: {user_group}')
+    permission = await db.get_permission_by_user_id(message.from_user.id)
+    text = (f'Настройки:\n\nПочта: {user_email}\nГруппа: {user_group}\nПрава: {permission}')
     if not await db.check_email_confirm(message.from_user.id):
         await message.answer(text, reply_markup=for_settings_unconfirm())    
     else:
@@ -101,7 +102,7 @@ async def start_confirm_email(callback: CallbackQuery, state: FSMContext, bot: B
 
     await auth_mail(email, code)
 
-    await bot.send_message(callback.from_user.id, f'{confirm_code_email}\n Code: {code}')
+    await bot.send_message(callback.from_user.id, f'{confirm_code_email}')
     await state.update_data(code = code)
     await state.set_state(ConfirmEmailState.ccode)
 

@@ -36,6 +36,10 @@ async def start_register(callback: CallbackQuery, state: FSMContext, bot: Bot):
 async def register_email(message: Message, state: FSMContext, bot: Bot):
     if re.match(valid.email_validation, message.text):
         await state.update_data(email=message.text)
+        db = DataBase()
+        dates = await state.get_data()
+        user_id = message.from_user.id
+        await db.add_user(user_id, message.from_user.username,dates["email"])
         await bot.send_message(message.from_user.id, choose_group, reply_markup = kb.groups_keyboard())
         await state.set_state(RegisterState.group)
     else:
@@ -46,11 +50,9 @@ async def register_group(message: Message, state: FSMContext, bot: Bot):
     if message.text in current_groups:
         await state.update_data(group=message.text)
         dates = await state.get_data()
-
         db = DataBase()
-        group_id = await db.get_group_id(dates['group'])
         user_id = message.from_user.id
-        await db.add_user(user_id, message.from_user.username,dates["email"])
+        group_id = await db.get_group_id(dates['group'])
         await db.create_group_link(user_id, group_id)
         await bot.send_message(message.from_user.id, text = successful_registration, reply_markup = main_keyboard.main())
         await state.clear()

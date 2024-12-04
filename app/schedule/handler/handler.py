@@ -42,5 +42,3 @@ def getting_schedule(course, week):
     delete_3_sheet(path)
     pdf_path = converter.xlsx_to_pdf(path)
     pngs = converter.pdf_to_png(pdf_path, course, week)
-
-getting_schedule(3, timecalc.get_current_week())
