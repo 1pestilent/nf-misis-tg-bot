@@ -18,7 +18,7 @@ current_groups = [
 
 permissions = ['Студент', 'Преподаватель', 'Админ']
 
-courses = ['1 курс', '2 курс', '3 курс', '4 курс']
+courses = [1, 2, 3, 4]
 
 # -----------------Ссылки-----------------
 link_github = 'https://github.com/1pestilent/nf-misis-tg-bot.git'

@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from app.database.models import *
 
 import os
+from time import sleep
 from dotenv import load_dotenv
 
 class DataBase():
@@ -134,7 +135,6 @@ class DataBase():
             else:
                 return False
     
-
     async def update_user_group(self, user, group_name):
         async with self.Session() as request:
             result = await request.execute(select(GroupLink).where(GroupLink.user_id == user))
@@ -149,5 +149,28 @@ class DataBase():
                 request.add(new_link)
                 await request.commit()
                 return True
-    
-        
+
+    async def add_timetable(self, course, week):
+        async with self.Session() as request:
+            new_timetable = TimeTable(course=course, week=week)
+            request.add(new_timetable)
+            await request.commit()
+            return True
+
+    async def get_timetable_id(self):
+        async with self.Session() as request:
+            result = await request.execute(select(TimeTable.id).order_by(TimeTable.created_at.desc()).limit(1))
+            return result.scalar_one_or_none()
+
+    async def add_pngs(self, ids, timetable_id):
+        async with self.Session() as request:
+            try:
+                for id in ids:
+                    png = Png(photo_id=id,timetable_id=timetable_id)
+                    request.add(png)
+                await request.commit()
+            except Exception as e:
+                await request.rollback()
+
+
+

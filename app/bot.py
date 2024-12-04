@@ -10,6 +10,7 @@ from app.core.dictionary import *
 
 from app.handlers.start.start import start_router
 from app.handlers.main.main import main_router
+from app.handlers.admin.admin import admin_router
 
 
 
@@ -18,9 +19,11 @@ token = os.getenv('TOKEN')
 
 async def main():
     bot = Bot(token=token)
-    dp = Dispatcher()
+    dp = Dispatcher() 
+    db = DataBase()
     dp.include_router(start_router)
     dp.include_router(main_router)
+    dp.include_router(admin_router)
     await dp.start_polling(bot)
 
 

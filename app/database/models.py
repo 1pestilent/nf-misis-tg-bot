@@ -44,8 +44,7 @@ class TimeTable(Base):
 
 class Png(Base):
     __tablename__ = 'pngs'
-
-    photo_id: Mapped[int] = mapped_column(primary_key=True)
+    photo_id: Mapped[str] = mapped_column(String(128),primary_key=True)
     timetable_id: Mapped[int] = mapped_column(ForeignKey('timetables.id', ondelete='RESTRICT'))
     created_at: Mapped[DateTime] = mapped_column(DateTime, server_default=text("TIMEZONE('utc',now())"))
 

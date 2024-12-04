@@ -37,8 +37,9 @@ def unzip():
 
 
 
-def getting_schedule(course, week):
-    path = downloader.get_schedule(course, week)
+def get_schedule(course, week):
+    path = downloader.download_schedule(course, week)
     delete_3_sheet(path)
     pdf_path = converter.xlsx_to_pdf(path)
     pngs = converter.pdf_to_png(pdf_path, course, week)
+    return pngs

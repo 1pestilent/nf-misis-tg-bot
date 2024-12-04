@@ -3,7 +3,7 @@ import os
 
 from app.schedule.dirs import xlsx_dir
 
-def get_schedule(course, week):
+def download_schedule(course, week):
 
     base_link = 'https://nf.misis.ru/images/uo/OFO'
 
