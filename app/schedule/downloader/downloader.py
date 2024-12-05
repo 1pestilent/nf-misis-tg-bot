@@ -11,20 +11,27 @@ def download_schedule(course, week):
         os.makedirs(xlsx_dir)
 
     patterns = ['kurs','k.','k']
-    name = f'{course}k_{week[:-5]}.xlsx'
-    path = f'{xlsx_dir}/{name}'
     
     try:
+        files = os.listdir(xlsx_dir)
+
         for pattern in patterns:
-            link = f'{base_link}/{course}{pattern}%20{week}.xlsx'
-            print(link)
-            response = requests.get(link)
-            if response.status_code == 200:
-                with open(path, 'wb') as file:
-                    file.write(response.content)
-                print(f'[Успешно] {name} - скачен!')
-                return path
+            name = f'{course}{pattern}%20{week}.xlsx'
+            path = f'{xlsx_dir}/{name}'
+
+            if name not in files:
+                link = f'{base_link}/{name}'
+                response = requests.get(link)
+                if response.status_code == 200:
+                    with open(path, 'wb') as file:
+                        
+                        file.write(response.content)
+                    print(f'[Успешно] {name} - скачен!')
+                    return path
+                else:
+                    print(f'[Ошибка] {link} - не существует!')
+                    continue
             else:
-                continue
+                return False
     except Exception as e:
         print(f"[Ошибка] {e}")
