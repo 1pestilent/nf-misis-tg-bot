@@ -10,7 +10,7 @@ def download_schedule(course, week):
     if not os.path.exists(xlsx_dir):
         os.makedirs(xlsx_dir)
 
-    patterns = ['kurs','k.','k']
+    patterns = ['kurs','kur.','ku','k']
     
     try:
         files = os.listdir(xlsx_dir)
